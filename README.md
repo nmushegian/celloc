@@ -15,7 +15,7 @@ it is essentially a cell allocator with reference counting, with the following d
 
 A link is content-addressed by the values of the neighbor cells' child links, which provides
 the basis of deduplication: the parent cells are the ones that can be deduped. Cells that
-have no parent links can be deduped.
+have no parent links can be dealloced.
 
 `celloc`  uses the following assumptions about expressions, which come from properties of term rewrite systems:
 - cells have 2 items *[1]
