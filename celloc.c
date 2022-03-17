@@ -15,8 +15,6 @@ typedef struct _ring {
   struct _ring* prev;
   union { struct _cell* clist; struct _tube* tlist; };
   union { struct _cell* citem; struct _tube* titem; };
-          void* list; // whose list is this in   (cell/tube)
-          void* item; // the other type of thing (cell/tube)
 } ring;
 
 typedef struct _cell {
@@ -52,7 +50,7 @@ cell* zoot; // null but an actual linked cell [root, root]
 
 cell* init() {
   cell* c0 = &cells[0];
-  tube* p0 = &tubes[0];
+  tube* t0 = &tubes[0];
   ring* r0 = &rings[0];
   ring* r1 = &rings[1];
 
@@ -60,21 +58,21 @@ cell* init() {
   tubec = 1;
   ringc = 2;
 
-  c0->axis = p0;
+  c0->axis = t0;
   c0->refs = r1;
 
-  p0->tag = AA;
-  p0->LC = c0;
-  p0->RC = c0;
-  p0->refs = r0;
+  t0->tag = AA;
+  t0->LC = c0;
+  t0->RC = c0;
+  t0->refs = r0;
 
-  r0->list = c0;
-  r0->item = p0;
+  r0->clist = c0;
+  r0->titem = t0;
   r0->prev = r0;
   r0->next = r0;
 
-  r1->list = p0;
-  r1->item = c0;
+  r1->tlist = t0;
+  r1->citem = c0;
   r1->prev = r1;
   r1->next = r1;
 
