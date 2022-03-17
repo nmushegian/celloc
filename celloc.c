@@ -11,60 +11,62 @@ typedef enum _quad {
 } quad;
 
 typedef struct _ring {
-  void* list; // whose list is this in   (cell/pair)
-  void* item; // the other type of thing (cell/pair)
-  struct _ring* prev; // or 'tail'
-  struct _ring* next; // or 'head'
+  struct _ring* next;
+  struct _ring* prev;
+  union { struct _cell* clist; struct _tube* tlist; };
+  union { struct _cell* citem; struct _tube* titem; };
+          void* list; // whose list is this in   (cell/tube)
+          void* item; // the other type of thing (cell/tube)
 } ring;
 
 typedef struct _cell {
-  struct _pair* children;
-  ring* references; // pair**
+  union { ring* refs; ring* next; };
+  struct _tube* axis;
 } cell;
 
-typedef struct _pair {
-  quad tag;
+typedef struct _tube {
+  union { ring* refs; ring* next; }; // 'next'
+  quad  tag;
   union { atom LA; cell* LC; };
   union { atom RA; cell* RC; };
-  ring* references; // cell**
-} pair;
+} tube;
 
 #define CELLS 1000000
 int   cellc = 0;
 cell  cells[CELLS];
 cell* fcells = &cells[0];
 
-#define PAIRS 1000000
-int  pairc = 0;
-pair  pairs[PAIRS];
-pair* fpairs = &pairs[0];
+#define TUBES 1000000
+int   tubec = 0;
+tube  tubes[TUBES];
+tube* ftubes = &tubes[0];
 
 #define RINGS 1000000
-int  ringc = 0;
+int   ringc = 0;
 ring  rings[RINGS];
 ring* frings = &rings[0];
 
 cell* cursor;
 cell* root;
-cell* zoot; // null but actually well-formed linked cell [root, root]
+cell* zoot; // null but an actual linked cell [root, root]
 
 cell* init() {
   cell* c0 = &cells[0];
-  pair* p0 = &pairs[0];
+  tube* p0 = &tubes[0];
   ring* r0 = &rings[0];
   ring* r1 = &rings[1];
 
   cellc = 1;
+  tubec = 1;
   ringc = 2;
-  pairc = 1;
 
-  c0->children = p0;
-  c0->references = r1;
+  c0->axis = p0;
+  c0->refs = r1;
 
   p0->tag = AA;
   p0->LC = c0;
   p0->RC = c0;
-  p0->references = r0;
+  p0->refs = r0;
 
   r0->list = c0;
   r0->item = p0;
@@ -79,11 +81,14 @@ cell* init() {
   zoot = c0;
   root = zoot;
   cursor = root;
+
   return cursor;
 }
 
+ring* grab_ring() {
+}
+
 void upsert(side s, cell* child) {
-  //
 }
 
 void _start() {
