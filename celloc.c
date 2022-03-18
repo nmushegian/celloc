@@ -6,15 +6,23 @@ typedef enum _side {
   L, R
 } side;
 
-typedef enum _quad {
+typedef enum _tope {
   AA, AC, CA, CC // atom x cell
-} quad;
+} tope;
+
+/*
+typedef struct _pair {
+  tope tag;
+  union { atom LA; struct _cell* LC; };
+  union { atom RA; struct _cell* RC; };
+} pair;
+*/
 
 typedef struct _ring {
   struct _ring* next;
   struct _ring* prev;
-  union { struct _cell* clist; struct _tube* tlist; };
-  union { struct _cell* citem; struct _tube* titem; };
+  union { struct _cell* clist; struct _tube* titem; };
+  union { struct _tube* tlist; struct _cell* citem; };
 } ring;
 
 typedef struct _cell {
@@ -24,9 +32,9 @@ typedef struct _cell {
 
 typedef struct _tube {
   union { ring* refs; ring* next; }; // 'next'
-  quad  tag;
-  union { atom LA; cell* LC; };
-  union { atom RA; cell* RC; };
+  tope  tag;
+  union { atom LA; struct _cell* LC; };
+  union { atom RA; struct _cell* RC; };
 } tube;
 
 #define CELLS 1000000
@@ -83,10 +91,15 @@ cell* init() {
   return cursor;
 }
 
-ring* grab_ring() {
-}
-
-void upsert(side s, cell* child) {
+void upsert(side s, cell* sert) {
+  tube* axis = cursor->axis;
+  cell* last;
+  switch(axis->tag) {
+  case (CC):
+  case (AC):
+  case (CA):
+  case (AA):
+  }
 }
 
 void _start() {
